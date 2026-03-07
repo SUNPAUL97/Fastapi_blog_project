@@ -1,7 +1,7 @@
 
 from fastapi import APIRouter, Form
 from fastapi.responses import Response, HTMLResponse, PlainTextResponse
-
+import time, asyncio 
 
 
 router = APIRouter(
@@ -12,13 +12,19 @@ router = APIRouter(
 
 products = ["Phone","Laptop","Smart Watch","Phone Accessories"]
 
+async def time_consuming_functionality():
+    
+    time.sleep(5)
+    return "Done"
+
 @router.post('/new')
 def create_product(name: str = Form(...)):
     products.append(name)
     return products
 @router.get('/all')
-def get_all_product():
+async def get_all_product():
     #return products
+    await time_consuming_functionality()
     data = " ".join(products)
     return Response(content=data,media_type="text/plain")
 

@@ -32,3 +32,8 @@ logs = [
     "2025-09-01 10:30:00 - user_2 - logout"
 ]
 print(calculate_session_times(logs))
+
+
+
+compliance = pd.read_sql_query("SELECT * FROM compliance", conn)
+compliance['date'] = pd.to_datetime(compliance['date'])

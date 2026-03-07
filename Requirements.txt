@@ -9,3 +9,6 @@ python-jose
 pydantic
 PyJWT
 aiofiles
+requests
+pytest
+jinja2

@@ -1,7 +1,8 @@
 from fastapi import FastAPI
-import sys
+import sys, time
 sys.path.append("C:/Users/MC MAGGIE/Downloads/FASTAPI/router")
 from router import users,blog_get,blog_post,article, product, file
+from templates import templates
 from auth import authentication
 from router.exceptions import StoryException
 from DB import models
@@ -11,6 +12,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 app = FastAPI()
+app.include_router(templates.router)
 app.include_router(authentication.router)
 app.include_router(users.router)
 app.include_router(file.router)
@@ -35,6 +37,13 @@ def story_exception_handler(request: Request, exc: StoryException):
 
 
 models.Base.metadata.create_all(engine)
+app.middleware("http")
+async def add_middleware(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = time.time() - start_time
+    response.headers['duration'] = str(duration)
+    return response
 
 origins = [
   'http://localhost:3000'
@@ -50,5 +59,6 @@ app.add_middleware(
 
 
 app.mount("/files", StaticFiles(directory="files"), name="files")
+app.mount("/templates/static", StaticFiles(directory="templates/static"), name="static")
 
 
